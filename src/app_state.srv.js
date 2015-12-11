@@ -43,5 +43,9 @@ angular.module('app').factory('StateService', function () {
     state[key] =  val;
   };
 
+  service.get = function (key) {
+    return state[key];
+  };
+
   return service;
 });

@@ -97,7 +97,25 @@ describe('StateService,', function () {
         expect(test).toThrow();
       });
     });
-  });
 
+    describe('get', function () {
+      beforeEach(function () {
+        service.defineState({name: 'a'});
+      });
+      describe('when primitive value was set', function () {
+        it('should return the value', function () {
+          service.set({name: 'a', value: 5});
+          expect(service.get('a')).toBe(5);
+        });
+      });
+      describe('when reference value was set', function () {
+        it('should return the reference', function () {
+          var ref_obj = {some: 'object'};
+          service.set({name: 'a', value: ref_obj});
+          expect(service.get('a')).toBe(ref_obj);
+        });
+      });
+    });
+  });
 });
 
