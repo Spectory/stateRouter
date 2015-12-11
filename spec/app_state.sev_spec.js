@@ -65,22 +65,37 @@ describe('StateService,', function () {
   });
 
   describe('set', function () {
-    beforeEach(function () {
-      var validator = function (x) {
-        var acceptable_values = ['home', 'settings', 'admin'];
-        return acceptable_values.indexOf(x) >= 0;
-      };
-      service.defineState({name: 'selected_header_tab', validator: validator});
+    describe('when validator was not defined', function () {
+      beforeEach(function () {
+        service.defineState({name: 'selected_header_tab'});
+      });
+      it('should accept any value', function () {
+        var vals = [1, "", null, 'home'];
+        _.forEach(vals, function (v) {
+          service.set({name: 'selected_header_tab', value: v});
+          expect(state.selected_header_tab).toEqual(v);
+        });
+      });
     });
 
-    it('when value is valid', function () {
-      service.set({name: 'selected_header_tab', value: 'home'});
-      expect(state.selected_header_tab).toEqual('home');
-    });
+    describe('when validator was defined', function () {
+      beforeEach(function () {
+        var validator = function (x) {
+          var acceptable_values = ['home', 'settings', 'admin'];
+          return acceptable_values.indexOf(x) >= 0;
+        };
+        service.defineState({name: 'selected_header_tab', validator: validator});
+      });
 
-    it('when value is invalid', function () {
-      var test = function () { service.set({name: 'selected_header_tab', value: 'somthing else'}); };
-      expect(test).toThrow();
+      it('should accept value when is valid', function () {
+        service.set({name: 'selected_header_tab', value: 'home'});
+        expect(state.selected_header_tab).toEqual('home');
+      });
+
+      it('should reject value when is invalid', function () {
+        var test = function () { service.set({name: 'selected_header_tab', value: 'somthing else'}); };
+        expect(test).toThrow();
+      });
     });
   });
 
