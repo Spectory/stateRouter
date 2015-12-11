@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <script src="../vendor/angular.js"></script>
+  <script src="../vendor/lodash.js"></script>
+  <script src="../src/app.js"></script>
+  <script src="../src/app_state.srv.js"></script>
+  <script src="ctl.js"></script>
+</head>
+  <body ng-app='app'>
+
+    <div ng-controller='ctl' ng-init='init()'>
+      
+      <h1>Tabs</h1>
+      <div ng-repeat='tab in tabs'>
+        <h3 style="float:left; padding: 10px;" ng-click='selectTab(tab)'>{{tab}}</h3>
+      </div>
+      <hr style='clear:both'>
+
+      <h1>Nums</h1>
+      <div ng-repeat='num in numbers'>
+        <h3 style="float:left; padding: 10px;" ng-click='selectNum(num)'>{{num}}</h3>
+      </div>
+      <hr style='clear:both'>
+      
+      <div> seleceted_tab = {{StateService.get('selected_tab')}} </div>
+      <div> seleceted_side_bar = {{StateService.get('selected_num')}} </div>
+      <div ng-click='getAppStateView()'> click to update state view - {{state_view}}</div>
+    </div>
+
+  </body>
+</html>

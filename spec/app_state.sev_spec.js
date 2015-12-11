@@ -1,5 +1,6 @@
-/*global angular, _, inject, describe, beforeEach, expect, it */
+/*global window, angular, _, inject, describe, beforeEach, expect, it */
 'use strict';
+window.karma_running = true;
 describe('StateService,', function () {
   var service, state;
 

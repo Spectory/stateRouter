@@ -1,11 +1,17 @@
-/*globals angular, _ */
+/*globals angular, _, window */
 'use strict';
 
 angular.module('app').factory('StateService', function () {
-  var state;
+  var state = {};
   var service = {};
   var VALIDATORS = {};
   var VALID_VAR_RGX = /[a-zA-Z_][a-zA-Z0-9_]*/;
+
+  if (window.karma_running) {
+    service.mockState = function (new_state) {
+      state = new_state;
+    };
+  }
 
   function T() { return true; }
 
@@ -24,10 +30,6 @@ angular.module('app').factory('StateService', function () {
     return _.includes(_.keys(state), key);
   }
 
-  service.mockState = function (new_state) {
-    state = new_state;
-  };
-
   service.defineState = function (def) {
     if (invalid_def(def)) {throw [def, "is an invalid state definition"].join(' '); }
     if (already_defined(def.name)) {throw [def.name, "was already defined"].join(' '); }
@@ -45,6 +47,10 @@ angular.module('app').factory('StateService', function () {
 
   service.get = function (key) {
     return state[key];
+  };
+
+  service.view = function () {
+    return _.cloneDeep(state);
   };
 
   return service;
