@@ -1,7 +1,8 @@
 /*globals angular, _ */
-'use strict';
 
 angular.module('app').controller('ctl', ['$scope', 'StateService', function ($scope, StateService) {
+  'use strict';
+
   $scope.init = function () {
     $scope.tabs = ['home', 'edit', 'settings'];
     $scope.numbers = [1, 2, 3, 4, 5, 6, 7, 8, 9];

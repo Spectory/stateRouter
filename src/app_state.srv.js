@@ -1,11 +1,12 @@
 /*globals angular, _, window */
-'use strict';
 
-angular.module('app').factory('StateService', function () {
+angular.module('app').factory('StateService', function ($location, $rootScope) {
+  'use strict';
+
   var state = {};
   var service = {};
   var VALIDATORS = {};
-  var VALID_VAR_RGX = /[a-zA-Z_][a-zA-Z0-9_]*/;
+  var VALID_VAR_RGX = /[a-zA-Z_][a-zA-Z0-9_]/;
 
   if (window.karma_running) {
     service.mockState = function (new_state) {
@@ -43,6 +44,7 @@ angular.module('app').factory('StateService', function () {
     var val = key_and_value.value;
     if (!VALIDATORS[key](val)) {throw [val, "is an invalid value for", key].join(' '); }
     state[key] =  val;
+    $location.search(state);
   };
 
   service.get = function (key) {
@@ -52,6 +54,11 @@ angular.module('app').factory('StateService', function () {
   service.view = function () {
     return _.cloneDeep(state);
   };
+
+  $rootScope.$on('$locationChangeStart', function () {
+    if (angular.equals(state, $location.search())) { return; }
+    state = $location.search();
+  });
 
   return service;
 });
