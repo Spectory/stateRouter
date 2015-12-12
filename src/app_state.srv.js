@@ -57,6 +57,7 @@ angular.module('app').factory('StateService', function ($location, $rootScope) {
 
   $rootScope.$on('$locationChangeStart', function () {
     if (angular.equals(state, $location.search())) { return; }
+    //TODO check the new state is valid
     state = $location.search();
   });
 
