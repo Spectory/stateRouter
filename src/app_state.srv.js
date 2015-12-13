@@ -68,7 +68,7 @@ angular.module('app').factory('StateService', function ($location, $rootScope) {
   };
 
   service.get = function (key) {
-    return state[key];
+    return _.cloneDeep(state[key]);
   };
 
   service.change = function (change_set) {
