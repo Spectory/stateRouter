@@ -136,10 +136,11 @@ describe('StateService,', function () {
         });
       });
       describe('when reference value was set', function () {
-        it('should return the reference', function () {
+        it('should return cloned object', function () {
           var ref_obj = {some: 'object'};
           service.set({name: 'a', value: ref_obj});
-          expect(service.get('a')).toBe(ref_obj);
+          expect(service.get('a')).toEqual(ref_obj);
+          expect(service.get('a').some).not.toBe(ref_obj);
         });
       });
     });
