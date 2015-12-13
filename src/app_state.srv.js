@@ -6,12 +6,13 @@ angular.module('app').factory('StateService', function ($location, $rootScope) {
   var state = {};
   var service = {};
   var VALIDATORS = {};
-  var VALID_VAR_RGX = /[a-zA-Z_][a-zA-Z0-9_]/;
+  var VALID_VAR_RGX = /[a-zA-Z_][a-zA-Z0-9_]*/;
 
   if (window.karma_running) {
     service.mockState = function (new_state) {
       state = new_state;
     };
+    service.VALIDATORS = VALIDATORS;
   }
 
   function T() { return true; }
@@ -39,6 +40,14 @@ angular.module('app').factory('StateService', function ($location, $rootScope) {
     state[def.name] = undefined;
   };
 
+  service.isValidState = function (s) {
+    var validators_results = _.map(_.keys(s), function (k) {
+      if (!VALIDATORS[k]) { return false; }
+      return VALIDATORS[k](s[k]);
+    });
+    return _.isEqual(_.uniq(validators_results), [true]);
+  };
+
   service.set = function (key_and_value) {
     var key = key_and_value.name;
     var val = key_and_value.value;
@@ -56,7 +65,10 @@ angular.module('app').factory('StateService', function ($location, $rootScope) {
   };
 
   $rootScope.$on('$locationChangeStart', function () {
-    if (angular.equals(state, $location.search())) { return; }
+    var new_state = $location.search();
+    if (angular.equals(state, new_state)) { return; }
+    // TODO isValidState is always false. need to serialize validators too.
+    // if (!service.isValidState(new_state)) { throw [JSON.stringify(new_state), "is an invalid state"].join(' '); }
     state = $location.search();
   });
 

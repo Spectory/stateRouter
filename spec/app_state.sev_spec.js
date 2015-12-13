@@ -23,12 +23,15 @@ describe('StateService,', function () {
           service.defineState({name: 'selected_header_tab'});
           expect(state.selected_header_tab).toBe(undefined);
         });
+        it(', should define a default state validator by given name', function () {
+          service.defineState({name: 'selected_header_tab'});
+          expect(service.VALIDATORS.selected_header_tab).toBeDefined();
+        });
 
         it(', should throw error if attribute was already defined', function () {
           service.defineState({name: 'selected_header_tab'});
           var test = function () {service.defineState({name: 'selected_header_tab'}); };
           expect(test).toThrow();
-
         });
       });
 
@@ -62,6 +65,29 @@ describe('StateService,', function () {
         _.forEach(tests, function (t) { expect(t).toThrow(); });
       });
 
+    });
+  });
+
+  describe('isValidState', function () {
+    beforeEach(function () {
+      function gtZero(x) { return x > 0; }
+      service.defineState({name: 'number', validator: gtZero});
+    });
+    describe('when state is valid', function () {
+      it('should return true', function () {
+        var valid_state = {'number': 4};
+        expect(service.isValidState(valid_state)).toBe(true);
+      });
+    });
+    describe('when state is invalid', function () {
+      it('should return false', function () {
+        var valid_state = {'number': -1};
+        expect(service.isValidState(valid_state)).toBe(false);
+      });
+      it('should return false', function () {
+        var valid_state = {'never_defined': 'some value'};
+        expect(service.isValidState(valid_state)).toBe(false);
+      });
     });
   });
 
