@@ -144,5 +144,33 @@ describe('StateService,', function () {
       });
     });
   });
-});
 
+  describe('change', function () {
+    beforeEach(function () {
+      function validator(sub) {
+        return _.intersection(_.keys(sub), ['sub_1', 'sub_2']).length === 2;
+      }
+      service.defineState({name: 'header'});
+      service.defineState({name: 'sub', validator: validator});
+      service.defineState({name: 'empty'});
+      service.set({name: 'header', value: 'home'});
+      service.set({name: 'sub', value: {sub_1: 'sub_1', sub_2: 'sub_2', sub_3: {sub_4: 'sub_4'}}});
+    });
+
+    describe('when input is valid', function () {
+      it('should change only matching attributes', function () {
+        service.change({
+          header: 'new_header',
+          sub: {sub_2: 'sub_2_new_value', sub_3: {sub_4: 'sub_4_new_value'}, sub_5: 'sub_5_new_value'},
+          empty: 'not empty any more'
+        });
+        expect(service.get('header')).toEqual('new_header');
+        expect(service.get('sub').sub_1).toEqual('sub_1');
+        expect(service.get('sub').sub_2).toEqual('sub_2_new_value');
+        expect(service.get('sub').sub_3.sub_4).toEqual('sub_4_new_value');
+        expect(service.get('sub').sub_5).toEqual('sub_5_new_value');
+        expect(service.get('empty')).toEqual('not empty any more');
+      });
+    });
+  });
+});

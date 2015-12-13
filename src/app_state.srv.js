@@ -32,6 +32,17 @@ angular.module('app').factory('StateService', function ($location, $rootScope) {
     return _.includes(_.keys(state), key);
   }
 
+  function merge(obj, change_set) {
+    var keys = Object.keys(change_set);
+    keys.forEach(function (k) {
+      if (typeof change_set[k] === 'object') {
+        merge(obj[k], change_set[k]);
+      } else {
+        obj[k] = change_set[k];
+      }
+    });
+  }
+
   service.defineState = function (def) {
     if (invalid_def(def)) {throw [def, "is an invalid state definition"].join(' '); }
     if (already_defined(def.name)) {throw [def.name, "was already defined"].join(' '); }
@@ -58,6 +69,12 @@ angular.module('app').factory('StateService', function ($location, $rootScope) {
 
   service.get = function (key) {
     return state[key];
+  };
+
+  service.change = function (change_set) {
+    var new_state = _.cloneDeep(state);
+    merge(new_state, change_set);
+    if (service.isValidState(state)) { state = new_state; }
   };
 
   service.view = function () {
