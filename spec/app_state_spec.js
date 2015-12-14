@@ -183,4 +183,50 @@ describe('StateService,', function () {
       });
     });
   });
+
+  describe('save and load', function () {
+
+  });
+});
+
+describe('StateKeeper', function () {
+  var service;
+  beforeEach(angular.mock.module('state_router'));
+
+  beforeEach(angular.mock.inject(function (StateKeeper) {
+    service = StateKeeper;
+  }));
+
+  it('should be defined', function () {
+    expect(service).toBeDefined();
+    expect(service.SAVED_STATES).toBeDefined();
+  });
+
+  describe('save', function () {
+    var initial_state;
+    beforeEach(function () {
+      initial_state = {selected_tab: 'Home'};
+      service.save({init: initial_state});
+    });
+    it('should cloned into SAVED_STATES given object under the given key', function () {
+      expect(service.SAVED_STATES.init).toEqual(initial_state);
+      expect(service.SAVED_STATES.init).not.toBe(initial_state);
+    });
+    it('should override when saved under the same key', function () {
+      var other_state = {selected_tab: 'not Home tab'};
+      service.save({init: other_state});
+      expect(service.SAVED_STATES.init).toEqual(other_state);
+      expect(service.SAVED_STATES.init).not.toBe(other_state);
+    });
+  });
+
+  describe('load', function () {
+    it('should return a cloned object', function () {
+      var saved_state = {some_attr: 'some value'};
+      service.SAVED_STATES.some_state = saved_state;
+      var res = service.load('some_state');
+      expect(res).toEqual(saved_state);
+      expect(res).not.toBe(saved_state);
+    });
+  });
 });

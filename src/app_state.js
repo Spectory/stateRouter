@@ -1,7 +1,33 @@
 /*globals angular, _, window */
 angular.module('state_router', []);
 
-angular.module('state_router').factory('StateService', function ($location, $rootScope) {
+/******************** StateKeeper ************************/
+
+angular.module('state_router').factory('StateKeeper', function () {
+  'use strict';
+  var service = {};
+  var SAVED_STATES = {};
+
+  if (window.karma_running) {
+    service.SAVED_STATES = SAVED_STATES;
+  }
+
+  service.save = function (key_and_state) {
+    var key = Object.keys(key_and_state);
+    var state = _.cloneDeep(key_and_state[key]);
+    SAVED_STATES[key] = state;
+  };
+
+  service.load = function (key) {
+    return _.cloneDeep(SAVED_STATES[key]);
+  };
+
+  return service;
+});
+
+/******************** StateService ************************/
+
+angular.module('state_router').factory('StateService', function ($location, $rootScope, StateKeeper) {
   'use strict';
 
   var state = {};
