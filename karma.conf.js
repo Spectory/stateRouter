@@ -18,8 +18,6 @@ module.exports = function(config) {
       'vendor/angular.js',
       'vendor/angular-mocks.js',
       'vendor/lodash.js',
-      'src/app.js',
-      'src/app.js',
       'src/*.js',
       'spec/*.js'
     ],

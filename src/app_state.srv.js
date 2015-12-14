@@ -1,6 +1,7 @@
 /*globals angular, _, window */
+angular.module('state_router', []);
 
-angular.module('app').factory('StateService', function ($location, $rootScope) {
+angular.module('state_router').factory('StateService', function ($location, $rootScope) {
   'use strict';
 
   var state = {};
@@ -75,7 +76,6 @@ angular.module('app').factory('StateService', function ($location, $rootScope) {
     var new_state = _.cloneDeep(state);
     merge(new_state, change_set);
     if (!service.isValidState(new_state)) {
-      console.log(new_state);
       throw [JSON.stringify(change_set), "led to invalid state"].join(' ');
     }
     state = new_state;

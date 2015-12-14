@@ -4,7 +4,7 @@ window.karma_running = true;
 describe('StateService,', function () {
   var service, state;
 
-  beforeEach(angular.mock.module('app'));
+  beforeEach(angular.mock.module('state_router'));
 
   beforeEach(angular.mock.inject(function (StateService) {
     service = StateService;
