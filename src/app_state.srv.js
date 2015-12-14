@@ -44,9 +44,9 @@ angular.module('app').factory('StateService', function ($location, $rootScope) {
   }
 
   service.defineState = function (def) {
-    if (invalid_def(def)) {throw [def, "is an invalid state definition"].join(' '); }
+    if (invalid_def(def)) {throw [JSON.stringify(def), "is an invalid state definition"].join(' '); }
     if (already_defined(def.name)) {throw [def.name, "was already defined"].join(' '); }
-    if (def.validator && !valid_validator(def.validator)) {throw [def, "Invalid validator"].join(' '); }
+    if (def.validator && !valid_validator(def.validator)) {throw [JSON.stringify(def), "Invalid validator"].join(' '); }
     VALIDATORS[def.name] = def.validator || T;
     state[def.name] = undefined;
   };
@@ -62,7 +62,7 @@ angular.module('app').factory('StateService', function ($location, $rootScope) {
   service.set = function (key_and_value) {
     var key = key_and_value.name;
     var val = key_and_value.value;
-    if (!VALIDATORS[key](val)) {throw [val, "is an invalid value for", key].join(' '); }
+    if (!VALIDATORS[key](val)) {throw [JSON.stringify(val), "is an invalid value for", key].join(' '); }
     state[key] =  val;
     $location.search(state);
   };
@@ -74,7 +74,11 @@ angular.module('app').factory('StateService', function ($location, $rootScope) {
   service.change = function (change_set) {
     var new_state = _.cloneDeep(state);
     merge(new_state, change_set);
-    if (service.isValidState(state)) { state = new_state; }
+    if (!service.isValidState(new_state)) {
+      console.log(new_state);
+      throw [JSON.stringify(change_set), "led to invalid state"].join(' ');
+    }
+    state = new_state;
   };
 
   service.view = function () {
