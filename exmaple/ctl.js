@@ -1,5 +1,5 @@
 /*globals angular, _ */
-
+angular.module('app', ['state_router']);
 angular.module('app').controller('ctl', ['$scope', 'StateService', function ($scope, StateService) {
   'use strict';
 
