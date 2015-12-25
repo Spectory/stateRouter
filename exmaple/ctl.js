@@ -31,7 +31,6 @@ angular.module('app').controller('ctl', ['$scope', 'StateService', function ($sc
   };
 
   $scope.isSelectedNum = function (i) {
-    console.log(i, StateService.get('selected_num'));
     return $scope.numbers[i] === parseInt(StateService.get('selected_num'), 10);
   };
 
