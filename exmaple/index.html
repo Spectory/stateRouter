@@ -3,28 +3,49 @@
 <head>
   <script src="../vendor/angular.js"></script>
   <script src="../vendor/lodash.js"></script>
-  <script src="../src/app_state.js"></script>
+  <script src="../src/state_router.js"></script>
   <script src="ctl.js"></script>
+
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css" integrity="sha384-1q8mTJOASx8j1Au+a5WDVnPi2lkFfwwEAa8hDDdjZlpLegxhjVME1fgjWPGmkzs7" crossorigin="anonymous">
+
 </head>
   <body ng-app='app'>
 
-    <div ng-controller='ctl' ng-init='init()'>
-      
-      <h1>Tabs</h1>
-      <div ng-repeat='tab in tabs'>
-        <h3 style="float:left; padding: 10px;" ng-click='selectTab(tab)'>{{tab}}</h3>
-      </div>
-      <hr style='clear:both'>
+    <div class='container' ng-controller='ctl' ng-init='init()'>
 
-      <h1>Nums</h1>
-      <div ng-repeat='num in numbers'>
-        <h3 style="float:left; padding: 10px;" ng-click='selectNum(num)'>{{num}}</h3>
+      <ul class="nav nav-tabs">
+        <li ng-repeat='tab in tabs' ng-class="{'active': isSelectedTab($index)}" ng-click='selectTab(tab)'>
+          <a>{{tab}}</a>
+        </li>
+      </ul>
+
+      <table class="table">
+        
+      </table>
+
+
+      <ul class="nav nav-pills">
+        <li ng-repeat='num in numbers' ng-class="{'active': isSelectedNum($index)}" ng-click='selectNum(num)'>
+          <a>{{num}}</a>
+        </li>
+      </ul>
+
+      <div class="panel panel-default">
+        <div class="panel-heading  text-center">Current State</div>
+        <div class="panel-body">
+          <div> seleceted tab = {{StateService.get('selected_tab')}} </div>
+          <div> seleceted num = {{StateService.get('selected_num')}} </div>
+          <button class='btn' ng-click='getAppStateView()'> click to update state view</button>
+          <div>{{state_view}}</div>
+        </div>
       </div>
-      <hr style='clear:both'>
-      
-      <div> seleceted tab = {{StateService.get('selected_tab')}} </div>
-      <div> seleceted num = {{StateService.get('selected_num')}} </div>
-      <div ng-click='getAppStateView()'> click to update state view - {{state_view}}</div>
+
+   <!--    <div class="panel-heading">Panel heading</div>
+      <div class="panel-body">
+        <p>...</p>
+      </div>
+
+    -->
     </div>
 
   </body>

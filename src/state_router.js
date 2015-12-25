@@ -1,25 +1,43 @@
 /*globals angular, _, window */
-angular.module('state_router', []);
+angular.module('StateRouter', []);
 
 /******************** StateKeeper ************************/
 
-angular.module('state_router').factory('StateKeeper', function () {
+angular.module('StateRouter').factory('StateKeeper', function () {
   'use strict';
   var service = {};
   var SAVED_STATES = {};
+  var VALID_VAR_RGX = /[a-zA-Z_][a-zA-Z0-9_]*/;
 
   if (window.karma_running) {
     service.SAVED_STATES = SAVED_STATES;
   }
 
-  service.save = function (key_and_state) {
-    var key = Object.keys(key_and_state);
-    var state = _.cloneDeep(key_and_state[key]);
-    SAVED_STATES[key] = state;
+  service.save = function (key, state) {
+    if (!VALID_VAR_RGX.test(key)) { throw ["Cannot save state for by name", key].join(' '); }
+    SAVED_STATES[key] = _.cloneDeep(state);
   };
 
   service.load = function (key) {
+    if (!VALID_VAR_RGX.test(key)) { throw ["Cannot load by name", key].join(' '); }
     return _.cloneDeep(SAVED_STATES[key]);
+  };
+
+  return service;
+});
+
+/******************** RouterService ************************/
+
+angular.module('StateRouter').factory('RouterService', function ($location) {
+  'use strict';
+  var service = {};
+
+  service.setRoute = function (state) {
+    $location.search(state);
+  };
+
+  service.getRoute = function () {
+    return $location.search();
   };
 
   return service;
@@ -27,7 +45,7 @@ angular.module('state_router').factory('StateKeeper', function () {
 
 /******************** StateService ************************/
 
-angular.module('state_router').factory('StateService', function ($location, $rootScope, StateKeeper) {
+angular.module('StateRouter').factory('StateService', function ($rootScope, StateKeeper, RouterService) {
   'use strict';
 
   var state = {};
@@ -70,6 +88,13 @@ angular.module('state_router').factory('StateService', function ($location, $roo
     });
   }
 
+  $rootScope.$on('$locationChangeStart', function () {
+    var new_state = RouterService.getRoute();
+    if (angular.equals(state, new_state)) { return; }
+    if (!service.isValidState(new_state)) { throw [JSON.stringify(new_state), "is an invalid state"].join(' '); }
+    state = new_state;
+  });
+
   service.defineState = function (def) {
     if (invalid_def(def)) {throw [JSON.stringify(def), "is an invalid state definition"].join(' '); }
     if (already_defined(def.name)) {throw [def.name, "was already defined"].join(' '); }
@@ -91,7 +116,7 @@ angular.module('state_router').factory('StateService', function ($location, $roo
     var val = key_and_value.value;
     if (!VALIDATORS[key](val)) {throw [JSON.stringify(val), "is an invalid value for", key].join(' '); }
     state[key] =  val;
-    $location.search(state);
+    RouterService.setRoute(state);
   };
 
   service.get = function (key) {
@@ -105,19 +130,25 @@ angular.module('state_router').factory('StateService', function ($location, $roo
       throw [JSON.stringify(change_set), "led to invalid state"].join(' ');
     }
     state = new_state;
+    RouterService.setRoute(state);
   };
 
   service.view = function () {
     return _.cloneDeep(state);
   };
 
-  $rootScope.$on('$locationChangeStart', function () {
-    var new_state = $location.search();
-    if (angular.equals(state, new_state)) { return; }
-    // TODO isValidState is always false. need to serialize validators too.
-    // if (!service.isValidState(new_state)) { throw [JSON.stringify(new_state), "is an invalid state"].join(' '); }
-    state = $location.search();
-  });
+  service.save = function (key, state) {
+    StateKeeper.save(key, state);
+  };
+
+  service.load = function (key) {
+    var loaded_stated = StateKeeper.load(key);
+    if (!service.isValidState(loaded_stated)) {
+      throw [key, "has loaded an invalid state", JSON.stringify(loaded_stated)].join(' ');
+    }
+    state = loaded_stated;
+    RouterService.setRoute(state);
+  };
 
   return service;
 });

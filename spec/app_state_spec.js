@@ -4,7 +4,7 @@ window.karma_running = true;
 describe('StateService,', function () {
   var service, state;
 
-  beforeEach(angular.mock.module('state_router'));
+  beforeEach(angular.mock.module('StateRouter'));
 
   beforeEach(angular.mock.inject(function (StateService) {
     service = StateService;
@@ -191,7 +191,7 @@ describe('StateService,', function () {
 
 describe('StateKeeper', function () {
   var service;
-  beforeEach(angular.mock.module('state_router'));
+  beforeEach(angular.mock.module('StateRouter'));
 
   beforeEach(angular.mock.inject(function (StateKeeper) {
     service = StateKeeper;
@@ -206,7 +206,7 @@ describe('StateKeeper', function () {
     var initial_state;
     beforeEach(function () {
       initial_state = {selected_tab: 'Home'};
-      service.save({init: initial_state});
+      service.save('init', initial_state);
     });
     it('should cloned into SAVED_STATES given object under the given key', function () {
       expect(service.SAVED_STATES.init).toEqual(initial_state);
@@ -214,7 +214,7 @@ describe('StateKeeper', function () {
     });
     it('should override when saved under the same key', function () {
       var other_state = {selected_tab: 'not Home tab'};
-      service.save({init: other_state});
+      service.save('init', other_state);
       expect(service.SAVED_STATES.init).toEqual(other_state);
       expect(service.SAVED_STATES.init).not.toBe(other_state);
     });
