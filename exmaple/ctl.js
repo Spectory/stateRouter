@@ -19,6 +19,7 @@ angular.module('app').controller('ctl', ['$scope', 'StateService', function ($sc
   $scope.init = function () {
     $scope.tabs = ['home', 'edit', 'settings'];
     $scope.numbers = [1, 2, 3, 4, 5, 6, 7, 8, 9];
+    $scope.saved_key_name = "default_key";
     $scope.StateService = StateService;
   };
   $scope.selectTab = function (val) {
@@ -32,6 +33,14 @@ angular.module('app').controller('ctl', ['$scope', 'StateService', function ($sc
 
   $scope.isSelectedNum = function (i) {
     return $scope.numbers[i] === parseInt(StateService.get('selected_num'), 10);
+  };
+
+  $scope.save = function () {
+    StateService.save($scope.saved_key_name);
+  };
+
+  $scope.load = function () {
+    StateService.load($scope.saved_key_name);
   };
 
   $scope.getAppStateView = function () { $scope.state_view = StateService.view(); };

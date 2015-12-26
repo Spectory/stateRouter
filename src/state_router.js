@@ -137,7 +137,7 @@ angular.module('StateRouter').factory('StateService', function ($rootScope, Stat
     return _.cloneDeep(state);
   };
 
-  service.save = function (key, state) {
+  service.save = function (key) {
     StateKeeper.save(key, state);
   };
 
